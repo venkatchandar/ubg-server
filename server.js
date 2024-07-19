@@ -4,7 +4,10 @@ const { Web3 } = require('web3');
 
 
 const app = express();
-const PORT = 3000;
+// const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
+
 
 // const WEB3_PROVIDER = 'https://rpc-mumbai.maticvigil.com/';  // Mumbai Testnet RPC
 const WEB3_PROVIDER = 'https://rpc-amoy.polygon.technology/';  // Amoy Testnet RPC
@@ -597,8 +600,12 @@ function isValidAddress(address) {
     return web3.utils.isAddress(address);
 }
 
+// app.listen(PORT, () => {
+//     console.log(`Server is running on http://localhost:${PORT}`);
+// });
+
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
 
 
