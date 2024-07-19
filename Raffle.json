@@ -1,0 +1,387 @@
+{
+	"address": "0xE76B70565F6fFBf414DD3Cd7A449aaA1EE244D33",
+	"abi": [
+	  {
+		  "inputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "constructor"
+	  },
+	  {
+		  "anonymous": false,
+		  "inputs": [
+			  {
+				  "indexed": false,
+				  "internalType": "address",
+				  "name": "participant",
+				  "type": "address"
+			  },
+			  {
+				  "indexed": false,
+				  "internalType": "uint256",
+				  "name": "numberOfEntries",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "NewEntry",
+		  "type": "event"
+	  },
+	  {
+		  "anonymous": false,
+		  "inputs": [],
+		  "name": "RaffleCancelled",
+		  "type": "event"
+	  },
+	  {
+		  "anonymous": false,
+		  "inputs": [],
+		  "name": "RaffleReset",
+		  "type": "event"
+	  },
+	  {
+		  "anonymous": false,
+		  "inputs": [
+			  {
+				  "indexed": false,
+				  "internalType": "address[]",
+				  "name": "winners",
+				  "type": "address[]"
+			  }
+		  ],
+		  "name": "WinnersPicked",
+		  "type": "event"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "cancelRaffle",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "_entryFee",
+				  "type": "uint256"
+			  },
+			  {
+				  "internalType": "uint256",
+				  "name": "_duration",
+				  "type": "uint256"
+			  },
+			  {
+				  "internalType": "uint256",
+				  "name": "_maxWinners",
+				  "type": "uint256"
+			  },
+			  {
+				  "internalType": "uint256",
+				  "name": "_maxEntriesPerAddress",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "createNewRaffle",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "duration",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "endRaffle",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "endRaffleImmediate",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "endTime",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "numberOfEntries",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "enterRaffle",
+		  "outputs": [],
+		  "stateMutability": "payable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "entries",
+		  "outputs": [
+			  {
+				  "internalType": "address",
+				  "name": "",
+				  "type": "address"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "entryFee",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "getActiveParticipants",
+		  "outputs": [
+			  {
+				  "internalType": "address[]",
+				  "name": "",
+				  "type": "address[]"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "address",
+				  "name": "participant",
+				  "type": "address"
+			  }
+		  ],
+		  "name": "getEntriesLeftForAddress",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "getEntryFees",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "getTimeRemainingForRaffle",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "getWinners",
+		  "outputs": [
+			  {
+				  "internalType": "address[]",
+				  "name": "",
+				  "type": "address[]"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "maxEntriesPerAddress",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "maxWinners",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [],
+		  "name": "owner",
+		  "outputs": [
+			  {
+				  "internalType": "address",
+				  "name": "",
+				  "type": "address"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "address",
+				  "name": "",
+				  "type": "address"
+			  }
+		  ],
+		  "name": "participantEntries",
+		  "outputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "bool",
+				  "name": "completed",
+				  "type": "bool"
+			  }
+		  ],
+		  "name": "resetRaffle",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "newDuration",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "setDuration",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "_maxEntriesPerAddress",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "setEntriesPerAddress",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "_entryFee",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "setEntryFee",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "_maxWinners",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "setMaxWinners",
+		  "outputs": [],
+		  "stateMutability": "nonpayable",
+		  "type": "function"
+	  },
+	  {
+		  "inputs": [
+			  {
+				  "internalType": "uint256",
+				  "name": "",
+				  "type": "uint256"
+			  }
+		  ],
+		  "name": "winners",
+		  "outputs": [
+			  {
+				  "internalType": "address",
+				  "name": "",
+				  "type": "address"
+			  }
+		  ],
+		  "stateMutability": "view",
+		  "type": "function"
+	  }
+  ]
+  }

@@ -6,27 +6,31 @@ const { Web3 } = require('web3');
 const app = express();
 const PORT = 3000;
 
-const WEB3_PROVIDER = 'https://rpc-mumbai.maticvigil.com/';  // Mumbai Testnet RPC
+// const WEB3_PROVIDER = 'https://rpc-mumbai.maticvigil.com/';  // Mumbai Testnet RPC
+const WEB3_PROVIDER = 'https://rpc-amoy.polygon.technology/';  // Amoy Testnet RPC
+
 const web3 = new Web3(WEB3_PROVIDER);
 
 app.use(express.json());
 
 
 //My Account & PK
-const ownerAccount = '';                      // Replace with your account address
-const privateKey = '';  // Replace with your private key
+const ownerAccount = '0xB27843d21Fc93c596E1144674E05921F25FfD35d';                      // Replace with your account address
+const privateKey = '67dc2bdaf2a797e84defd533ca5815cbc2572d414317d1c582aac2f0e0d632fc';  // Replace with your private key
 
 //Contracts
 const UBGTokenData = require('./UBGToken.json');
 const EscrowData = require('./Escrow.json');
 const UnseenBattlegroundsData = require('./UnseenBattlegrounds.json');
 const UBGAssetsData = require('./UBGAssets.json');
+const RaffleData = require('./Raffle.json');
 
 
 const UBGToken = new web3.eth.Contract(UBGTokenData.abi, UBGTokenData.address);
 const Escrow = new web3.eth.Contract(EscrowData.abi, EscrowData.address);
 const UnseenBattlegrounds = new web3.eth.Contract(UnseenBattlegroundsData.abi, UnseenBattlegroundsData.address);
 const UBGAssets = new web3.eth.Contract(UBGAssetsData.abi, UBGAssetsData.address);
+const Raffle = new web3.eth.Contract(RaffleData.abi, RaffleData.address);
 
 
 //Token addresses for supported ERC 20 tokens
@@ -320,6 +324,222 @@ app.post('/assets/burn', async(req, res) => {
 });
 
 
+// function createNewRaffle(uint256 _entryFee, uint256 _duration, uint256 _maxWinners, uint256 _maxEntriesPerAddress) external onlyOwner {
+app.post('/raffle/create', async (req, res) => {
+    try {
+        const fees = parseInt(req.body._entryFee); 
+        const duration = parseInt(req.body._duration); 
+        const maxWinners = parseInt(req.body._maxWinners); 
+        const maxEntriesPerAddress = parseInt(req.body._maxEntriesPerAddress); 
+
+        const txReceipt = await raffleContractInteraction(Raffle.methods.createNewRaffle(fees, duration, maxWinners, maxEntriesPerAddress).encodeABI());
+        res.json({ success: true, transactionHash: txReceipt.transactionHash });
+    } 
+    catch (error) {
+        console.error("Error duration:", error);
+        res.status(500).json({ error: "Failed to duration: " + error.message });
+    }
+});
+
+// function resetRaffle(bool completed) public onlyOwner {
+app.get('/raffle/reset', async (req, res) => {
+    try {
+        await Raffle.methods.resetRaffle().call();
+        res.json({ success: true });
+    } 
+    catch (error) {
+        console.error("Error resetting Raffle:", error);
+        res.status(500).json({ error: 'Failed to resetting Raffle' });
+    }
+});
+
+
+// cancelRaffle
+app.get('/raffle/cancel', async (req, res) => {
+    try {
+        await Raffle.methods.cancelRaffle().call();
+        res.json({ success: true });
+    } 
+    catch (error) {
+        console.error("Error canceling Raffle:", error);
+        res.status(500).json({ error: 'Failed to canceling Raffle' });
+    }
+});
+
+// function endRaffle() public onlyOwner {
+app.get('/raffle/end', async (req, res) => {
+    try {
+        await Raffle.methods.endRaffle().call();
+        res.json({ success: true });
+    } 
+    catch (error) {
+        console.error("Error ending Raffle:", error);
+        res.status(500).json({ error: 'Failed to end Raffle' });
+    }
+});
+
+
+// function endRaffleImmediate() external onlyOwner {
+app.get('/raffle/endImmediate', async (req, res) => {
+    try {
+        await Raffle.methods.endRaffleImmediate().call();
+        res.json({ success: true });
+    } 
+    catch (error) {
+        console.error("Error ending Raffle:", error);
+        res.status(500).json({ error: 'Failed to end Raffle' });
+    }
+});
+
+// function setEntriesPerAddress(uint256 _maxEntriesPerAddress) external onlyOwner {
+app.post('/raffle/setEntriesPerAddress', async (req, res) => {
+    try {
+        const entriesPerAddress = parseInt(req.body.setEntriesPerAddress); 
+        if (!entriesPerAddress)
+            return res.status(400).json({ error: "Invalid number of entriesPerAddress provided" });
+
+        const txReceipt = await raffleContractInteraction(Raffle.methods.setEntriesPerAddress(entriesPerAddress).encodeABI());
+        res.json({ success: true, transactionHash: txReceipt.transactionHash });
+    } 
+    catch (error) {
+        console.error("Error entriesPerAddress:", error);
+        res.status(500).json({ error: "Failed to entriesPerAddress: " + error.message });
+    }
+});
+
+// function setEntryFee(uint256 _entryFee) external onlyOwner {
+app.post('/raffle/setEntryFees', async (req, res) => {
+    try {
+        const entryFees = parseInt(req.body.setEntryFee); 
+        if (!entryFees)
+            return res.status(400).json({ error: "Invalid number of entryFees provided" });
+
+        const txReceipt = await raffleContractInteraction(Raffle.methods.setEntryFee(entryFees).encodeABI());
+        res.json({ success: true, transactionHash: txReceipt.transactionHash });
+    } 
+    catch (error) {
+        console.error("Error setEntryFee:", error);
+        res.status(500).json({ error: "Failed to setEntryFee: " + error.message });
+    }
+});
+
+// function setDuration(uint256 newDuration) external onlyOwner {
+app.post('/raffle/setDuration', async (req, res) => {
+    try {
+        const duration = parseInt(req.body.newDuration); 
+        if (!duration)
+            return res.status(400).json({ error: "Invalid number of duration provided" });
+
+        const txReceipt = await raffleContractInteraction(Raffle.methods.setDuration(duration).encodeABI());
+        res.json({ success: true, transactionHash: txReceipt.transactionHash });
+    } 
+    catch (error) {
+        console.error("Error duration:", error);
+        res.status(500).json({ error: "Failed to duration: " + error.message });
+    }
+});
+
+// function setMaxWinners(uint256 _maxWinners) external onlyOwner {
+app.post('/raffle/setMaxWinners', async (req, res) => {
+    try {
+        const maxWinners = parseInt(req.body._maxWinners); 
+        if (!maxWinners)
+            return res.status(400).json({ error: "Invalid number of maxWinners provided" });
+
+        const txReceipt = await raffleContractInteraction(Raffle.methods.setMaxWinners(maxWinners).encodeABI());
+        res.json({ success: true, transactionHash: txReceipt.transactionHash });
+    } 
+    catch (error) {
+        console.error("Error setMaxWinners:", error);
+        res.status(500).json({ error: "Failed to setMaxWinners: " + error.message });
+    }
+});
+
+
+// function getEntriesLeftForAddress (address participant) public view returns (uint256) {
+app.get('/raffle/entriesLeftForAddress', async (req, res) => {
+    try {
+        const entriesLeft = await Raffle.methods.getEntryFees(req.params.participant).call();
+        res.json({ success: true, entriesLeft: entriesLeft, participant: req.params.participant });
+    } 
+    catch (error) {
+        console.error("Error fetching entriesLeft:", error);
+        res.status(500).json({ error: 'Failed to fetch entriesLeft' });
+    }
+});
+
+
+// function getEntryFees () public view returns (uint256) {
+app.get('/raffle/entryFees', async (req, res) => {
+    try {
+        const entryFees = await Raffle.methods.getEntryFees().call();
+        res.json({ success: true, entryFees: entryFees });
+    } 
+    catch (error) {
+        console.error("Error fetching entryFees:", error);
+        res.status(500).json({ error: 'Failed to fetch entryFees' });
+    }
+});
+
+// function getTimeRemainingForRaffle() public view returns (uint256) {
+app.get('/raffle/timeRemainingForRaffle', async (req, res) => {
+    try {
+        const timeRemaining = await Raffle.methods.getTimeRemainingForRaffle().call();
+        res.json({ success: true, timeRemaining: timeRemaining });
+    } 
+    catch (error) {
+        console.error("Error fetching timeRemaining:", error);
+        res.status(500).json({ error: 'Failed to fetch timeRemaining' });
+    }
+});
+
+// function getActiveParticipants() public view returns (address[] memory) {
+app.get('/raffle/activeParticipants', async (req, res) => {
+    try {
+        const activeParticipants = await Raffle.methods.getActiveParticipants().call();
+        res.json({ success: true, activeParticipants: activeParticipants });
+    } 
+    catch (error) {
+        console.error("Error fetching activeParticipants:", error);
+        res.status(500).json({ error: 'Failed to fetch activeParticipants' });
+    }
+});
+
+// function getWinners() external view returns (address[] memory) {
+app.get('/raffle/winners', async (req, res) => {
+    try {
+        const winners = await Raffle.methods.getWinners().call();
+        res.json({ success: true, winners: winners });
+    } 
+    catch (error) {
+        console.error("Error fetching winners:", error);
+        res.status(500).json({ error: 'Failed to fetch winners' });
+    }
+});
+
+
+
+
+app.post('/raffle/enter', async (req, res) => {
+    try {
+        const numberOfEntries = parseInt(req.body.numberOfEntries); // Number of entries from the request body
+
+        if (!numberOfEntries) {
+            return res.status(400).json({ error: "Invalid number of entries provided" });
+        }
+
+        const txReceipt = await raffleContractInteraction(Raffle.methods.enterRaffle(numberOfEntries).encodeABI());
+        res.json({ success: true, transactionHash: txReceipt.transactionHash });
+    } 
+    catch (error) {
+        console.error("Error entering raffle:", error);
+        res.status(500).json({ error: "Failed to enter raffle: " + error.message });
+    }
+});
+
+
+
+
 
 async function ubgTokenContractInteraction (data) {
     return await contractInteraction(UBGToken.address, data);
@@ -335,6 +555,10 @@ async function escrowContractInteraction (data) {
 
 async function unseenBattlegroundsContractInteraction (data) {
     return await contractInteraction(UnseenBattlegroundsData.address, data);
+}
+
+async function raffleContractInteraction (data) {
+    return await contractInteraction(RaffleData.address, data);
 }
 
 
