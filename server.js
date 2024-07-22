@@ -1,10 +1,12 @@
 const express = require('express');
+const cors = require('cors');
+
 const { Web3 } = require('web3');
 
 
 
 const app = express();
-// const PORT = 3000;
+
 const PORT = process.env.PORT || 3000;
 
 
@@ -58,6 +60,7 @@ const supportedTokenAddresses = [];
 //     }
 // });
 
+app.use(cors());
 
 app.get('/ubgtoken/balance/:address', async (req, res) => {
     try {
@@ -330,17 +333,18 @@ app.post('/assets/burn', async(req, res) => {
 // function createNewRaffle(uint256 _entryFee, uint256 _duration, uint256 _maxWinners, uint256 _maxEntriesPerAddress) external onlyOwner {
 app.post('/raffle/create', async (req, res) => {
     try {
-        const fees = parseInt(req.body._entryFee); 
-        const duration = parseInt(req.body._duration); 
-        const maxWinners = parseInt(req.body._maxWinners); 
-        const maxEntriesPerAddress = parseInt(req.body._maxEntriesPerAddress); 
+        const fees = parseInt(req.body.entryFee); 
+        const duration = parseInt(req.body.duration); 
+        const maxWinners = parseInt(req.body.maxWinners); 
+        const maxEntriesPerAddress = parseInt(req.body.maxEntriesPerAddress); 
+
 
         const txReceipt = await raffleContractInteraction(Raffle.methods.createNewRaffle(fees, duration, maxWinners, maxEntriesPerAddress).encodeABI());
         res.json({ success: true, transactionHash: txReceipt.transactionHash });
     } 
     catch (error) {
-        console.error("Error duration:", error);
-        res.status(500).json({ error: "Failed to duration: " + error.message });
+        console.error("Error create: ", error);
+        res.status(500).json({ error: "Failed to create: " + error.message });
     }
 });
 
@@ -365,7 +369,7 @@ app.get('/raffle/cancel', async (req, res) => {
     } 
     catch (error) {
         console.error("Error canceling Raffle:", error);
-        res.status(500).json({ error: 'Failed to canceling Raffle' });
+        res.status(500).json({ error: 'Failed to canceling Raffle '+error });
     }
 });
 
@@ -377,7 +381,7 @@ app.get('/raffle/end', async (req, res) => {
     } 
     catch (error) {
         console.error("Error ending Raffle:", error);
-        res.status(500).json({ error: 'Failed to end Raffle' });
+        res.status(500).json({ error: 'Failed to end Raffle' + error });
     }
 });
 
@@ -476,23 +480,23 @@ app.get('/raffle/entriesLeftForAddress', async (req, res) => {
 app.get('/raffle/entryFees', async (req, res) => {
     try {
         const entryFees = await Raffle.methods.getEntryFees().call();
-        res.json({ success: true, entryFees: entryFees });
+        res.json({ success: true, entryFees: entryFees.toString() });
     } 
     catch (error) {
         console.error("Error fetching entryFees:", error);
-        res.status(500).json({ error: 'Failed to fetch entryFees' });
+        res.status(500).json({ error: 'Failed to fetch entryFees '+ error });
     }
 });
 
 // function getTimeRemainingForRaffle() public view returns (uint256) {
-app.get('/raffle/timeRemainingForRaffle', async (req, res) => {
+app.get('/raffle/timeRemaining', async (req, res) => {
     try {
         const timeRemaining = await Raffle.methods.getTimeRemainingForRaffle().call();
-        res.json({ success: true, timeRemaining: timeRemaining });
+        res.json({ success: true, timeRemaining: timeRemaining.toString() });
     } 
     catch (error) {
         console.error("Error fetching timeRemaining:", error);
-        res.status(500).json({ error: 'Failed to fetch timeRemaining' });
+        res.status(500).json({ error: 'Failed to fetch timeRemaining '+ error });
     }
 });
 
@@ -603,6 +607,11 @@ function isValidAddress(address) {
 // app.listen(PORT, () => {
 //     console.log(`Server is running on http://localhost:${PORT}`);
 // });
+
+// Allow CORS from your frontend's origin
+app.use(cors({
+    origin: 'http://localhost:8080'
+}));
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
